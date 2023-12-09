@@ -1,0 +1,204 @@
+head	1.2;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.2
+date	2017.11.26.14.17.31;	author sgass;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2017.11.25.14.34.14;	author sgass;	state Exp;
+branches;
+next	;
+
+
+desc
+@links images to traing and test dirs
+@
+
+
+1.2
+log
+@split categories into only good for lunch, dinner or neither
+niether being breakfast
+@
+text
+@#!/bin/bash 
+
+training_image_path=training_images/good_for_lunch_or_dinner
+test_image_path=test_images/good_for_lunch_or_dinner
+classes="good_for_lunch good_for_dinner good_for_breakfast" 
+# excluede good for both since it is too similar to dinner and lunch
+# neither is also an indication of good for breakfast (assuming that if a
+# restaurant exists that it must be good for some meal)
+get_image_paths_py=good_for_lunch_csv_parse.py
+num_images=43130 # number of images in the smallest category
+train_imgs_per_class=$((num_images*4/5))
+test_imgs_per_class=$((num_images*1/5))
+
+clean(){
+    # remove files from a previous execution
+    echo "cleaning"
+    if [ -e $training_image_path ]; then
+        rm -rf $training_image_path
+    fi
+    
+    if [ -e $test_image_path ]; then
+        rm -rf $test_image_path
+    fi
+
+    mkdir $training_image_path
+    mkdir $test_image_path
+    for class in $classes
+    do
+        mkdir $training_image_path/$class
+        mkdir $test_image_path/$class
+    done
+}
+
+setup_dirs() {
+    echo "making links"
+    get_image_paths
+    for class in $classes
+    do
+        echo $class
+        make_links $class
+    done
+}
+
+get_image_paths(){
+# create a file with a list of good for lunch file names 
+# and another with bad for lunch file names
+# good_for_lunch.txt and bad_for_lunch.txt
+echo "getting image paths"
+$get_image_paths_py
+}
+
+make_links(){
+    # use the list of image paths to link a number of food and not food images into
+    # test and training dirs. 
+    # use img per class variables to set how many images to use
+    # $1 is the type of food 
+    class=$1
+
+    train_img_thresh=$train_imgs_per_class
+    test_img_thresh=$((train_imgs_per_class+test_imgs_per_class))
+    
+    imgs=`sort -R $class.txt` # shuffle images
+    img_cnt=0
+    for img in $imgs
+    do
+        if [ $img_cnt -lt $train_img_thresh ]; then
+            ln -s $img $training_image_path/$class
+        elif [ $img_cnt -lt $test_img_thresh ]; then
+            ln -s $img $test_image_path/$class
+        else
+            break
+        fi
+        img_cnt=$((img_cnt+1))
+    done
+}
+
+verify(){
+    # double check that it worked
+    for class in $classes
+    do
+        echo "training/$class:   `ls $training_image_path/$class | wc -l`"
+    done
+    for class in $classes
+    do
+        echo "test/$class:   `ls $test_image_path/$class | wc -l`"
+    done
+}
+
+#main
+clean
+setup_dirs
+verify
+
+for class in $classes
+do
+    rm -f $class.txt
+done
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 6
+a8 6
+training_image_path=training_images/good_for_lunch
+test_image_path=test_images/good_for_lunch
+class_1_name=good_for_lunch
+class_2_name=bad_for_lunch
+c1_list_fname=$class_1_name.txt
+c2_list_fname=$class_2_name.txt
+d10 3
+a25 2
+    mkdir $training_image_path/$class_1_name
+    mkdir $training_image_path/$class_2_name
+d27 15
+a41 2
+    mkdir $test_image_path/$class_1_name
+    mkdir $test_image_path/$class_2_name
+d53 1
+a53 1
+    # use the list of image paths to link a number of images into
+d56 2
+d62 1
+a62 4
+    echo "shuffeling files"
+    c1_image_paths=`sort -R $c1_list_fname` # shuffle images
+
+    echo "making links"
+d64 1
+a64 1
+    for c1_image_path in $c1_image_paths
+d67 1
+a67 1
+            ln -s $c1_image_path $training_image_path/$class_1_name
+d69 1
+a69 1
+            ln -s $c1_image_path $test_image_path/$class_1_name
+a73 16
+        
+    done
+    
+    c2_image_paths=`sort -R $c2_list_fname` # shuffle images
+    img_cnt=0
+    for c2_image_path in $c2_image_paths
+    do
+        if [ $img_cnt -lt $train_img_thresh ]; then
+            ln -s $c2_image_path $training_image_path/$class_2_name
+        elif [ $img_cnt -lt $test_img_thresh ]; then
+            ln -s $c2_image_path $test_image_path/$class_2_name
+        else
+            break
+        fi
+        img_cnt=$((img_cnt+1))
+        
+d79 8
+a86 4
+    echo "training/$class_1_name:   `ls $training_image_path/$class_1_name | wc -l`"
+    echo "training/$class_2_name:   `ls $training_image_path/$class_2_name | wc -l`"
+    echo "test/$class_1_name:       `ls $test_image_path/$class_1_name | wc -l`"
+    echo "test/$class_2_name:       `ls $test_image_path/$class_2_name | wc -l`"
+d91 1
+a91 5
+get_image_paths
+num_images=`cat $c1_list_fname | wc -l`
+train_imgs_per_class=$((num_images*4/5))
+test_imgs_per_class=$((num_images*1/5))
+make_links
+d94 4
+a97 2
+rm -f $c1_list_fname
+rm -f $c2_list_fname
+@

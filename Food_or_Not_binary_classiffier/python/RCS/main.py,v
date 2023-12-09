@@ -1,0 +1,52 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2017.11.02.23.10.54;	author sgass;	state Exp;
+branches;
+next	;
+
+
+desc
+@main module for food classification project
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@from imageLoader import imageLoader
+from modelHandler import modelHandler
+from modelTrainer import modelTrainer
+from time import time
+
+# start timmer
+start_time = time()
+
+#import images
+#img = imageLoader(images_per_class=11070)
+img = imageLoader(images_per_class=110)
+
+# make a new model
+m = modelHandler()
+#model = m.makeNewModel()
+model = m.loadModel('release_models/model_1102_0505.json','release_models/weights_1102_0505.h5')
+
+# compile model
+t = modelTrainer()
+t.compileModel(model)
+
+# train and evaluate the model
+t.trainModel(model, img)
+t.evaluateModel(model, img)
+
+# save model
+m.saveModel(model)
+
+print('training time (hr):',(time()-start_time)/3600)@

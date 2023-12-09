@@ -1,0 +1,21 @@
+---------
+1102_1536
+mini-VGGnet acc=94%
+other parameters unknown
+
+---------
+1114_1752
+full VGGnet
+10 epochs lr=0.001 acc = 94%
+
+1114_1859
+10 more epochs lr=0.0001 acc=93
+
+1114_1940
+5 more epochs lr=0.0001 acc=94
+
+1114_2021
+5 more epochs lr=0.00001 acc=97
+
+1114_2100
+5 more epochs batch size 28 lr=0.000001 acc=97 (technicall 0.2 better than the last one)

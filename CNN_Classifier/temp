@@ -1,0 +1,3 @@
+Classifier Architecture
+Imagetoullie uses a number of CNNs to perform its classification tasks. These CNNs were created in Python using Keras  
+

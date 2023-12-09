@@ -1,0 +1,12 @@
+-----
+full VGGnet
+1121_1721
+20 epochs lr = 1e-3 acc=70
+
+-----
+Full VGGnet using only images with few labels
+1123_0403
+50 epochs lr=1e-3 acc=58
+
+1123_1833
+more 80 epochs lr=1e-4 acc=60 

@@ -1,0 +1,53 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2017.11.05.03.01.00;	author sgass;	state Exp;
+branches;
+next	;
+
+
+desc
+@main module
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@from time import time
+
+from imageLoader import imageLoader
+from modelTrainer import modelTrainer
+
+from python.modelHandler import modelHandler
+
+# start timmer
+start_time = time()
+
+#import images
+img = imageLoader()
+
+# make a new model
+m = modelHandler()
+model = m.makeNewModel(num_categories=101)
+#model = m.loadModel('release_models/model_1102_0505.json','release_models/weights_1102_0505.h5')
+
+# compile model
+t = modelTrainer()
+t.compileModel(model)
+
+# train and evaluate the model
+t.trainModel(model, img)
+t.evaluateModel(model, img)
+
+# save model
+m.saveModel(model)
+
+print('training time (hr):',(time()-start_time)/3600)@

@@ -1,0 +1,12 @@
+Food_101/
+Google_Open_Images/
+ImageNet/
+model_trainer_source.zip
+._test_photos
+._train_photos
+._train_photo_to_biz_ids.csv
+Yelp_photos/
+*models/
+*/release_models/
+*__pycache__/
+*pyc

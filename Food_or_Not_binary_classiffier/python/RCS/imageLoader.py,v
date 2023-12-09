@@ -1,0 +1,329 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.4
+date	2017.11.24.22.46.14;	author sgass;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2017.10.30.03.00.26;	author sgass;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2017.10.30.02.35.01;	author sgass;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2017.10.30.02.30.17;	author sgass;	state Exp;
+branches;
+next	;
+
+
+desc
+@transforms images into a format consumable by the keras trainer
+@
+
+
+1.4
+log
+@Converted keras sequenct to image data generator
+@
+text
+@from glob import glob
+from keras.preprocessing.image import ImageDataGenerator
+
+class imageLoader():
+    def __init__(self):
+
+        self.training_paths = 'training_images'
+        self.test_paths = 'test_images'
+
+        self.num_training_imgs = len(glob('training_images/*/*'))
+        self.num_test_imgs = len(glob('test_images/*/*'))
+
+    def getNumTrainingImages(self):
+        return self.num_training_imgs
+
+    def getNumTestImages(self):
+        return self.num_test_imgs
+
+    def _getImgGen(self,path,batch_size):
+
+        def imgPreProc(img):
+            img = img/255.0
+            return img
+
+        ImgDatGen = ImageDataGenerator(featurewise_center=False,
+                                        samplewise_center=False,
+                                        featurewise_std_normalization=False,
+                                        samplewise_std_normalization=False,
+                                        zca_whitening=False,
+                                        zca_epsilon=1e-6,
+                                        rotation_range=0.,
+                                        width_shift_range=0.,
+                                        height_shift_range=0.,
+                                        shear_range=0.,
+                                        zoom_range=0.,
+                                        channel_shift_range=0.,
+                                        fill_mode='constant',
+                                        cval=0.,
+                                        horizontal_flip=False,
+                                        vertical_flip=False,
+                                        rescale=None,
+                                        preprocessing_function=imgPreProc)
+       # class_list = ['apple_pie', 'donuts', 'nachos', 'pizza', 'steak']
+        class_list = None
+        return ImgDatGen.flow_from_directory(directory=path,
+                                             target_size=(256,256),
+                                             color_mode='rgb',
+                                             classes=class_list,
+                                             class_mode='categorical',
+                                             batch_size=batch_size,
+                                             shuffle=True,
+                                             follow_links=True)
+
+    def trainingImageGenerator(self, batch_size=32):
+        return self._getImgGen(self.training_paths,batch_size)
+
+    def testImageGenerator(self, batch_size=32):
+        return self._getImgGen(self.test_paths,batch_size)
+
+
+
+@
+
+
+1.3
+log
+@converted generator to keras sequence since the generator kept erroring out
+@
+text
+@a0 1
+import numpy as np
+d2 1
+a2 2
+from PIL import Image
+from random import shuffle
+d5 1
+a5 1
+    def __init__(self, images_per_class=100):
+d7 5
+a11 18
+        # get path names
+        food_paths = glob('Food_101/images/*/*.jpg')
+        not_food_paths = glob('ImageNet/not_food/*/*.JPEG')
+        # shuffle to get mix categories
+        shuffle(food_paths)
+        shuffle(not_food_paths)
+        # only use n images
+        food_paths = food_paths[0:images_per_class]
+        not_food_paths = not_food_paths[0:images_per_class]
+        # split the images into 20% test and 80% training
+        div = int(0.8 * images_per_class)
+        self.training_food_paths = food_paths[0:div]
+        self.training_not_food_paths = not_food_paths[0:div]
+        self.test_food_paths = food_paths[div:]
+        self.test_not_food_paths = not_food_paths[div:]
+        num_classes = 2
+        self.num_training_imgs = div * num_classes
+        self.num_test_imgs = (images_per_class - div) * num_classes
+d19 35
+d55 1
+a55 1
+        return FoodSequence(self.training_food_paths, self.training_not_food_paths,batch_size)
+d58 1
+a58 2
+        return FoodSequence(self.test_food_paths, self.test_not_food_paths, batch_size)
+
+a59 1
+from keras.utils import Sequence
+a60 33
+class FoodSequence(Sequence):
+    def __init__(self, food_paths, not_food_paths, batch_size=32):
+        # batch size
+        if batch_size % 2 == 1: print('ERROR: batch size must be even')
+        self.batch_size = batch_size
+        self.num_batches = (len(food_paths) + len(not_food_paths)) // batch_size
+        self.food_paths = food_paths
+        self.not_food_paths = not_food_paths
+
+    def __len__(self):
+        return self.num_batches
+
+    def __getitem__(self, batch):
+        foodImgs = [Image.open(fname) for fname in
+                    self.food_paths[batch * self.batch_size // 2:self.batch_size // 2 * (batch + 1)]]
+        nFoodImgs = [Image.open(fname) for fname in
+                     self.not_food_paths[batch * self.batch_size // 2:self.batch_size // 2 * (batch + 1)]]
+        # resize to 256x256 for now. need to do more inteligent resizing later
+        foodImgs = [i.resize((256, 256)) for i in foodImgs]
+        nFoodImgs = [i.resize((256, 256)) for i in nFoodImgs]
+        # extract the RGB pixel values into a list of size (num_images, height, width, channels=3)
+        foodImgs = [np.array(i) for i in foodImgs]
+        nFoodImgs = [np.array(i) for i in nFoodImgs]
+        # convert to list to get the right shape
+        foodImgs = [i.tolist() for i in foodImgs]
+        nFoodImgs = [i.tolist() for i in nFoodImgs]
+        # combine lists and convert to a numpy array
+        x_train = np.array(foodImgs + nFoodImgs)
+        # rescale pixel values to range 0.0:1.0
+        x_train = x_train / 255.0
+        # create target data
+        y_train = np.array([[1.0, 0.0]] * (self.batch_size // 2) + [[0.0, 1.0]] * (self.batch_size // 2))
+        return x_train, y_train
+a61 2
+    def on_epoch_end(self):
+        pass
+@
+
+
+1.2
+log
+@Created generator functions since all of the training images couldn't fit in ram
+@
+text
+@d35 1
+a35 25
+        if batch_size % 2 == 1: print('ERROR: batch size must be even')
+        num_batches = self.num_training_imgs // batch_size
+        batch = 0
+        while 1:
+            print('\n',batch)
+            foodImgs = [Image.open(fname) for fname in self.training_food_paths[batch*batch_size//2:batch_size//2*(batch+1)]]
+            nFoodImgs = [Image.open(fname) for fname in self.training_not_food_paths[batch*batch_size//2:batch_size//2*(batch+1)]]
+            # resize to 256x256 for now. need to do more inteligent resizing later
+            foodImgs = [i.resize((256, 256)) for i in foodImgs]
+            nFoodImgs = [i.resize((256, 256)) for i in nFoodImgs]
+            # extract the RGB pixel values into a list of size (num_images, height, width, channels=3)
+            foodImgs = [np.array(i) for i in foodImgs]
+            nFoodImgs = [np.array(i) for i in nFoodImgs]
+            # convert to list to get the right shape
+            foodImgs = [i.tolist() for i in foodImgs]
+            nFoodImgs = [i.tolist() for i in nFoodImgs]
+            # combine lists and convert to a numpy array
+            x_train = np.array(foodImgs + nFoodImgs)
+            # rescale pixel values to range 0.0:1.0
+            x_train = x_train/255.0
+            # create target data
+            y_train = np.array([[1.0,0.0]]*(batch_size//2) + [[0.0,1.0]]*(batch_size//2))
+            yield (x_train, y_train)
+            batch += 1
+            if batch == num_batches: batch = 0
+d38 8
+d47 32
+a78 23
+        num_batches = self.num_test_imgs // batch_size
+        batch = 0
+        while 1:
+            foodImgs = [Image.open(fname) for fname in self.test_food_paths[batch*batch_size//2:batch_size//2*(batch+1)]]
+            nFoodImgs = [Image.open(fname) for fname in self.test_not_food_paths[batch*batch_size//2:batch_size//2*(batch+1)]]
+            # resize to 256x256 for now. need to do more inteligent resizing later
+            foodImgs = [i.resize((256, 256)) for i in foodImgs]
+            nFoodImgs = [i.resize((256, 256)) for i in nFoodImgs]
+            # extract the RGB pixel values into a list of size (num_images, height, width, channels=3)
+            foodImgs = [np.array(i) for i in foodImgs]
+            nFoodImgs = [np.array(i) for i in nFoodImgs]
+            # convert to list to get the right shape
+            foodImgs = [i.tolist() for i in foodImgs]
+            nFoodImgs = [i.tolist() for i in nFoodImgs]
+            # combine lists and convert to a numpy array
+            x_test = np.array(foodImgs + nFoodImgs)
+            # rescale pixel values to range 0.0:1.0
+            x_test = x_test/255.0
+            # create target data
+            y_test = np.array([[1.0,0.0]]*(batch_size//2) + [[0.0,1.0]]*(batch_size//2))
+            yield (x_test, y_test)
+            batch += 1
+            if batch == num_batches: batch = 0
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a3 1
+import time
+d7 1
+a7 1
+    def __init__(self):
+d9 77
+a85 69
+        print('loading images')
+
+        food_paths = glob('Food_101/images/*')
+        food_train_x, food_train_y, food_test_x, food_test_y = self._loadImages(food_paths, [1.0,0.0], 'jpg')
+        print('num food images:    ',food_train_x.shape[0] + food_test_x.shape[0])
+
+        not_food_paths = glob('ImageNet/not_food/*')
+        not_food_train_x , not_food_train_y, not_food_test_x, not_food_test_y = self._loadImages(not_food_paths, [0.0,1.0], 'JPEG')
+        print('num not food images:',not_food_train_x.shape[0] + not_food_test_x.shape[0])
+
+        self.x_train = np.concatenate([food_train_x, not_food_train_x])
+        self.y_train = np.concatenate([food_train_y, not_food_train_y])
+        self.x_test = np.concatenate([food_test_x, not_food_test_x])
+        self.y_test = np.concatenate([food_test_y, not_food_test_y])
+
+        self.x_train = self.x_train/255.0
+        self.x_test = self.x_test/255.0
+
+        print('x train shape',self.x_train.shape)
+        print('y train shape',self.y_train.shape)
+        print('x test shape ',self.x_test.shape)
+        print('y test shape ',self.y_test.shape)
+        print('image loading complete')
+
+    def _loadImages(self, paths, one_hot, file_ext):
+        # imports and formats all of the images in the list directory at the specified path
+        # specifically for ImageNet dirs
+        start_time = time.time()
+        fileList = []
+        for path in paths:
+            # make a list of all the image file names that we want to import
+            fileList += glob(path + '/*.' + file_ext)
+        # shuffle the images so they are represented equally in test and training sets
+        shuffle(fileList)
+        # m
+        # ake a list of PIL image objects with those file names
+        imageList = [Image.open(fname) for fname in fileList[0:1000]]
+        # resize to 256x256 for now. need to do more inteligent resizing later
+        resizedImageList = [i.resize((256, 256)) for i in imageList]
+        del imageList
+        # extract the RGB pixel values into a list of size (num_images, height, width, channels=3)
+        pixelArray = [np.array(i) for i in resizedImageList]
+        del resizedImageList
+        pixelList = [i.tolist() for i in pixelArray]
+        del pixelArray
+        # convert the list to a numpy array
+        formatted_images = np.array(pixelList)
+        del pixelList
+        # split the images into test and training
+        div = int(0.8 * formatted_images.shape[0])
+        training_images = formatted_images[0:div]
+        train_cat = np.array([one_hot]*div)
+
+        test_images = formatted_images[div:]
+        test_cat_i = np.zeros((formatted_images.shape[0] - div, 1))
+        test_cat = np.array([one_hot] * (formatted_images.shape[0] - div))
+
+        return (training_images, train_cat, test_images, test_cat)
+
+    def getTrainingImages(self):
+        return (self.x_train, self.y_train)
+    def getTestImages(self):
+        return (self.x_test, self.y_test)
+
+    def trainingImageGenerator(self):
+        pass
+
+    def testImageGenorator(self):
+        pass
+@

@@ -1,0 +1,88 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	2017.11.25.14.34.14;	author sgass;	state Exp;
+branches;
+next	;
+
+
+desc
+@parses yelp csv to setup for the dir_setup scripts
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#!/usr/local/bin/python3.5
+import os
+import csv
+from copy import deepcopy
+
+def readCsvFile(fname):
+    # opens a csv file and returns a list of rows
+    csv_rows = []
+
+    with open(fname, 'r') as csvfile:
+        reader = csv.reader(csvfile) 
+        for row in reader:
+            # you can only iterate through the csv reader once
+            csv_rows.append(deepcopy(row))
+        csvfile.close()
+
+    return csv_rows
+
+#Global variables
+yelp_path = '../Yelp_photos'
+image_path = yelp_path + '/train_photos'
+image_to_biz_csv_path = yelp_path + '/train_photo_to_biz_ids.csv'
+biz_to_label_csv_path = yelp_path + '/train.csv'
+competing_labels_thresh = 4
+label_of_interest = '0' #good for lunch
+#label_of_interest = '1' #good for dinner
+
+# csv to list
+image_to_biz_csv = readCsvFile(image_to_biz_csv_path) # col0=image_id col1=biz_id 
+biz_to_label_csv = readCsvFile(biz_to_label_csv_path) # col0=biz_id col1=label
+
+# create a dictonary that maps biz_ids to labels
+biz_to_label = {}
+for each in biz_to_label_csv:
+    biz_id = each[0]
+    label = each[1]
+    biz_to_label[biz_id] = label
+
+# create a dictionary that maps image_ids to a boolean representing their
+# inclusion in the category of interest
+good_for_lunch = {}
+for img_biz_pair in image_to_biz_csv:
+    image_id = img_biz_pair[0]
+    biz_id = img_biz_pair[1]
+    num_competing_labels = int((len(biz_to_label[biz_id])+1)/2)
+    if label_of_interest in biz_to_label[biz_id]:
+        if num_competing_labels < competing_labels_thresh:
+            good_for_lunch[image_id] = True
+        else:
+            pass # may be good for lunch but may be an unrealyed pic from a place that is good for lunch
+    else:
+        good_for_lunch[image_id] = False
+# remove the label pair
+good_for_lunch.pop('photo_id',None)
+
+with open('good_for_lunch.txt','w') as gfile, open('bad_for_lunch.txt','w') as bfile:
+    for img_id in good_for_lunch:
+        path = '/home/sgass/Projects/ECE-6258/Yelp_photos/train_photos/' + img_id + '.jpg\n'
+        if good_for_lunch[img_id]:
+            gfile.write(path)
+        else:
+            bfile.write(path)
+
+#os.system('dir_setup_good_for_lunch.sh called_from_python')
+@

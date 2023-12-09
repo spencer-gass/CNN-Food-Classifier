@@ -1,0 +1,61 @@
+/usr/bin/python3.5 /home/sgass/Projects/ECE-6258/Multiclass_Food_Classifier/python/main.py
+Using TensorFlow backend.
+2017-11-14 07:01:14.407634: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2017-11-14 07:01:14.510761: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:892] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2017-11-14 07:01:14.511190: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 0 with properties: 
+name: GeForce GTX 970 major: 5 minor: 2 memoryClockRate(GHz): 1.1775
+pciBusID: 0000:01:00.0
+totalMemory: 3.94GiB freeMemory: 3.67GiB
+2017-11-14 07:01:14.511202: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:0) -> (device: 0, name: GeForce GTX 970, pci bus id: 0000:01:00.0, compute capability: 5.2)
+loaded model release_models/model_1114_0619.json from disk
+Found 80800 images belonging to 101 classes.
+Epoch 1/20
+2017-11-14 07:01:25.855353: W tensorflow/core/common_runtime/bfc_allocator.cc:217] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.19GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory is available.
+2017-11-14 07:01:26.080415: W tensorflow/core/common_runtime/bfc_allocator.cc:217] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.20GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory is available.
+2017-11-14 07:01:26.418015: W tensorflow/core/common_runtime/bfc_allocator.cc:217] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.14GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory is available.
+2017-11-14 07:01:26.503859: W tensorflow/core/common_runtime/bfc_allocator.cc:217] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.20GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory is available.
+2017-11-14 07:01:26.776304: W tensorflow/core/common_runtime/bfc_allocator.cc:217] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.11GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory is available.
+2017-11-14 07:01:26.899369: W tensorflow/core/common_runtime/bfc_allocator.cc:217] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.19GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory is available.
+   1/5050 [..............................] - ETA: 25608s - loss: 0.0459 - acc: 1.0000
+   2/5050 [..............................] - ETA: 13539s - loss: 0.0585 - acc: 1.0000
+   3/5050 [..............................] - ETA: 9525s - loss: 0.1507 - acc: 0.9792 
+   4/5050 [..............................] - ETA: 7517s - loss: 0.1377 - acc: 0.9844
+   5/5050 [..............................] - ETA: 6312s - loss: 0.1865 - acc: 0.9750
+   6/5050 [..............................] - ETA: 5515s - loss: 0.1596 - acc: 0.9792
+   7/5050 [..............................] - ETA: 4941s - loss: 0.1632 - acc: 0.9643
+   8/5050 [..............................] - ETA: 4511s - loss: 0.1429 - acc: 0.9688
+   9/5050 [..............................] - ETA: 4175s - loss: 0.1273 - acc: 0.9722
+  10/5050 [..............................] - ETA: 3907s - loss: 0.1146 - acc: 0.9750
+  11/5050 [..............................] - ETA: 3690s - loss: 0.1144 - acc: 0.9716
+  12/5050 [..............................] - ETA: 3509s - loss: 0.1059 - acc: 0.9740
+  13/5050 [..............................] - ETA: 3355s - loss: 0.1053 - acc: 0.9760
+  14/5050 [..............................] - ETA: 3222s - loss: 0.1095 - acc: 0.9732
+  15/5050 [..............................] - ETA: 3107s - loss: 0.1022 - acc: 0.9750
+  16/5050 [..............................] - ETA: 3007s - loss: 0.0971 - acc: 0.9766
+  17/5050 [..............................] - ETA: 2918s - loss: 0.0997 - acc: 0.9743
+  18/5050 [..............................] - ETA: 2839s - loss: 0.0947 - acc: 0.9757
+  19/5050 [..............................] - ETA: 2768s - loss: 0.1086 - acc: 0.9737
+  20/5050 [..............................] - ETA: 2705s - loss: 0.1037 - acc: 0.9750
+  21/5050 [..............................] - ETA: 2653s - loss: 0.1030 - acc: 0.9732
+  22/5050 [..............................] - ETA: 2601s - loss: 0.0994 - acc: 0.9744
+  23/5050 [..............................] - ETA: 2555s - loss: 0.0951 - acc: 0.9755
+  24/5050 [..............................] - ETA: 2512s - loss: 0.0930 - acc: 0.9766
+  25/5050 [..............................] - ETA: 2471s - loss: 0.0927 - acc: 0.9775
+  26/5050 [..............................] - ETA: 2433s - loss: 0.0909 - acc: 0.9784
+  27/5050 [..............................] - ETA: 2397s - loss: 0.0875 - acc: 0.9792
+  28/5050 [..............................] - ETA: 2364s - loss: 0.0865 - acc: 0.9777
+  29/5050 [..............................] - ETA: 2333s - loss: 0.0917 - acc: 0.9763
+  30/5050 [..............................] - ETA: 2308s - loss: 0.0889 - acc: 0.9771
+  31/5050 [..............................] - ETA: 2286s - loss: 0.0944 - acc: 0.9758
+  32/5050 [..............................] - ETA: 2274s - loss: 0.0936 - acc: 0.9766
+  33/5050 [..............................] - ETA: 2250s - loss: 0.0925 - acc: 0.9773
+  34/5050 [..............................] - ETA: 2229s - loss: 0.0905 - acc: 0.9779
+  35/5050 [..............................] - ETA: 2209s - loss: 0.0941 - acc: 0.9768
+  36/5050 [..............................] - ETA: 2189s - loss: 0.0943 - acc: 0.9757
+  37/5050 [..............................] - ETA: 2172s - loss: 0.0954 - acc: 0.9747
+  38/5050 [..............................] - ETA: 2154s - loss: 0.0939 - acc: 0.9753
+  39/5050 [..............................] - ETA: 2137s - loss: 0.1026 - acc: 0.9744
+  40/5050 [..............................] - ETA: 2122s - loss: 0.1006 - acc: 0.9750
+  41/5050 [..............................] - ETA: 2106s - loss: 0.1015 - acc: 0.9726
+  42/5050 [..............................] - ETA: 2093s - loss: 0.1005 - acc: 0.9717
+  43/5050 [..............................] - ETA: 2079s - loss: 0.0984 - acc: 0.9724

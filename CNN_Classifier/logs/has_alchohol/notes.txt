@@ -1,0 +1,5 @@
+1129_1630
+epochs=25 lr=1e-3 acc=61
+
+weights_1130_0518
+epochs=20 acc=65%

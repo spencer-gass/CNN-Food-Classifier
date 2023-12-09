@@ -1,0 +1,5 @@
+1128_1335
+20 epochs acc=68%
+
+1129_0450
+20 more epochs acc=68%

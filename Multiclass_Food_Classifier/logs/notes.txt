@@ -1,0 +1,110 @@
+1104_2059.txt  
+This was the first build of a 101 class classifier but with only ~1000 images
+and for only 10 epochs so accuracy was low (2%)
+
+1105_1315.txt
+This build used all 101000 images but the same architecture and parameters as 
+the binary classifier and as a result after 24 hours it was either not learning
+or learning extreamly slowly
+
+doubled the size of the conv and fc layers. increased the learning rate to 10^-2 as per VGGnet
+tried lots of things that didn't work
+turns out the dir setup script was concatinating the previous dir listings together so in essence all the 
+traing data was random.
+
+---------
+1106_2053
+mini-VGGnet
+5 classes, 40 images/class. trained successfully. over trained on the small data set.
+trained really fast with .01 learning rate
+
+1107_0045
+5 classes, 800 imaged/class (ie just about as many as images as we can use to train)
+did much better than perivious iteration but still only 50% accurate
+
+1107_1349
+same as previous but with random image mods, learning rate 10^-4, and 40 epochs
+only about 4% improvment ~53%. a top five output filter could help 
+
+1107_1946
+Added a third 2-layer conv before the FC layers and increased first FC layer to 512 outputs
+36%
+
+1108_0259
+tried to model VGGnet as closly as possible. loss was going down slowly but surly but then
+blew up in the last epoch??? ended with 20% accuracy
+
+1108_1212
+tried again with fewer epochs to try to catch a good set of weights before it diverged 
+but it diverged earlier...
+
+mini-VGGnet takes ~ 160 images/class before loss starts to drop
+"fully" trained in 20-30 epochs. 10 min/epoch -> 5 hours
+
+---------
+1109_1414
+lower learing rate so it didn't diverge! to recap this is using parapeters as close to VGGnet type A as possible
+15 epochs lr = 0.001 ~30min/epoch
+acc:38%
+
+1109_1920
+five more epochs lr = 0.001 
+acc:42% 
+
+1110_1709
+20 more epochs lr =0.001
+acc: 46%
+
+1111_0834
+30 more epochs lr = 0.0001
+acc: 53%
+
+full-VGGnet takes ~ 320 images/class before loss starts dropping 
+"fully" trained in 70-100 epochs. 30 min/epoch -> 50 hours
+
+--------
+mini-VGGnet with 101 classes: 3.5 hours/epoch -> expected 4 days
+full-VGGnet with 101 classes: 10 hours/epoch -> expected 41 days
+
+--------
+installed CUDA and tensorflow-gpu
+mini-VGGnet with 101 classes: 15 min/epoch -> expected 7.5 hours
+Full-VGGnet with 101 classes: 25 min/epoch -> expected 42 hours
+
+1112_1426
+mini-VGG, 101 classes, 2 epochs, lr=0.001, acc=8%
+
+1112_1747
+10 more epochs lr-0.001, acc=15%
+training accuracy was 60% overtrained?
+
+1112_2037
+5 more epocks lr=0.001, acc=15%
+training accuracy was 85%...
+
+---------
+1113_0611
+Full-VGGnet
+20 epochs, 8.5 hrs, lr=0.001, acc=51%! trainining accuracy=56%
+
+1113_1507
+20 more epochs, lr=0.001, acc=55%, training accuracy= 86%
+
+1114_0619
+20 more epochs, lr=0.0001, acc= 58% training accuracy=97%
+
+1114_1551
+20 more epochs, lr=0.00001 acc=59 training accuracy=98
+the large training vs test accuracy discrepency leads me to believe we are over training
+
+---------
+1115_1708
+Full VGGnet with 10% drop out between convs
+40 epochs, lr-0.001, acc=55%
+loss and traing accuracy are higher than 1113_1507
+
+1116_1826
+40 more epochs lr=0.0001 acc = 58% training accuracy=98%
+
+1116_1826
+5 more with augmentation 

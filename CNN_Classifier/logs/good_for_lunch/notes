@@ -1,0 +1,65 @@
+---------
+full VGGnet
+sorting images by putting any image that is associated with a business that is labeled good for lunch
+in one directory and all else in another.
+~100k training images
+
+1120_0639
+20 epochs, lr 1e-3, acc=66 (~60% acc at epoch 5)
+
+1120_1718
+20 more epochs, lr=1e-3 acc= 67
+
+---------
+Full VGGnet, only used images from busineses with few total labels
+about ~40k training images
+
+1122_0605
+40 epochs lr=1e-3 acc=%70
+
+1122_1920
+40 more epochs lr=1e-4, acc=69 :(
+
+-----
+labels are associated with biz ids and biz ids are associated with pictures
+    naieve method: if a business is associated with a label, label all of it's images with that label
+    problem: images that are not an indication of the label are treated equally to images that are indicative.
+        70% accurcy since there are many common attributes/patterns between both categories
+
+    Atempt at improvment: average the predictions for a set of images from a business, this way they are classified to
+    be generally similar to the good for lunch images. However the high loss / low training accuracy means that
+    there aren't clear differences between the two categories. This method imporves accuracy to ~ 75%
+
+    possible alternatives:
+    1) make classifiers for other categories, evaluate them, and talk about why this method doesn't work
+        would be better to just talk about this in the papper and not waist time here
+    2) use the pretrained imagenet VGGnet that comes with keras and do a logistic regsession and see if that works
+        categories of the image net challenge are wildly varied and most are not pertinante to restraunts
+
+    3) Most common catagories of things in yelp pics food, drink, retaruant, people, meues
+       Assume that food is the most important category for determining good for lunch
+       use the type of food to determine good for lunch / dinner
+        use only food image, associate a label with a food categoriy, train a MLP to associate food with good for lunch
+        do food or not       -> food 101                              -> good for lunch classifier       
+
+    4) Assume that a restaurant is either good for lunch, dinner or both
+       use the naieve method but split images into good for dinner but not lunch, good for lunch but not dinner, or good for both
+        
+-----
+split images into 3 categories [only good for lunch, only good for dinner, neither aka good for breakfast]
+was at 51% after 19 epochs and increasing slowly
+crashed!!!!!! like WTF!!!!!
+
+-----
+Split the images into two categories (lunch vs dinner)
+
+1126_1707
+20 epochs, lr = 1e-3 acc=72 woo!
+
+1127_0600
+20 more epochs, lr=1e-4 acc=75
+
+1127_1621
+20 more epochs, lr=1e-4 acc=75
+
+
