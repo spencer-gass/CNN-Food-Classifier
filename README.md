@@ -7,14 +7,4 @@ created a classifiaction system based off VGGnet sytle CNNs.
 
 [Food 101](https://www.vision.ee.ethz.ch/datasets_extra/food-101/)  
 [yelp challenge](https://www.kaggle.com/c/yelp-restaurant-photo-classification/data)  
-[ImageNet](http://image-net.org/index)  
-    restaurant  
-    billboard  
-    face  
-    kitchen  
-    menu  
-    people  
-    pet  
-    waiter  
-    food  
-    drinks  
+[ImageNet](http://image-net.org/index): {restaurant, billboard, face, kitchen, menu, people, pet, waiter, food, drinks}
